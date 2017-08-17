@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.views.generic import View
+from django.views.generic import View,TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
@@ -38,10 +38,13 @@ def user_list_view(request):
         print(user.username,user.email)
     return render(request,"user/userlist.html",{"userlist":user_queryset})
 
-class UserListView(View):
+class User_ListView(View):
     
     @method_decorator(login_required)
     def get(self,request,*args,**kwargs):
         user_queryset = User.objects.all()
         #return HttpResponse("HEllo world")
         return render(request,"user/userlist.html",{"userlist":user_queryset})
+
+class UserListView(TemplateView):
+    template_name = "user/userlist.html"
