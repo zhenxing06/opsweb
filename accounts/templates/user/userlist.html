@@ -1,0 +1,18 @@
+{% extends "public/layout.html" %}
+
+{% block body %}
+    <table class="table table-striped">
+        <tr>
+            <th>序  号</th>
+            <th>用户名</th>
+            <th>Email </th>
+        </tr>
+        {% for user_obj in userlist %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ user_obj.username }}</td>
+                <td>{{ user_obj.email }} </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
