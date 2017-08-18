@@ -7,7 +7,7 @@
             <th>用户名</th>
             <th>Email </th>
         </tr>
-        {% for user_obj in userlist %}
+        {% for user_obj in object_list %}
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ user_obj.username }}</td>
@@ -15,4 +15,25 @@
             </tr>
         {% endfor %}
     </table>
+    <div>
+        <center>
+        <ul class="pagination">
+        <li><a href="{% url 'user_list' %}?page=1">首页</a></li>
+        {% if page_obj.has_previous %}
+            <li><a href="{% url 'user_list' %}?page={{ page_obj.previous_page_number }}">上一页</a></li>
+        {% endif %}
+        {% for p in page_obj.paginator.page_range %}
+            {% if p == page_obj.number %}
+                <li class="active"><a href="{% url 'user_list' %}?page={{ p }}">{{ p }}</a></li>
+            {% else %}
+                <li><a href="{% url 'user_list' %}?page={{ p }}">{{ p }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <li><a href="{% url 'user_list' %}?page={{ page_obj.next_page_number }}">下一页</a></li>
+        {% endif %}
+         <li><a href="{% url 'user_list' %}?page={{ page_obj.paginator.num_pages }}">最后一页</a></li>
+        </ul>
+        </center>
+    </div>
 {% endblock %}

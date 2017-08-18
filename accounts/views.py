@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.views.generic import View,TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 def login_view(request):
     if request.method == "GET":
@@ -48,3 +49,19 @@ class User_ListView(View):
 
 class UserListView(TemplateView):
     template_name = "user/userlist.html"
+    per = 10
+    def get_context_data(self,**kwargs):
+        context = super(UserListView,self).get_context_data(**kwargs)
+        try:
+            page_num = int(self.request.GET.get('page',1))
+        except:
+            page_num = 1
+        user_list = User.objects.all()
+        paginator = Paginator(user_list,self.per)
+        
+        context["page_obj"] = paginator.page(page_num)
+        context["object_list"] = context["page_obj"].object_list
+        return context
+    @method_decorator(login_required)
+    def get(self,request,*args,**kwargs):
+        return super(UserListView,self).get(request,*args,**kwargs) 
