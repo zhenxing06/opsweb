@@ -65,3 +65,23 @@ class UserListView(TemplateView):
     @method_decorator(login_required)
     def get(self,request,*args,**kwargs):
         return super(UserListView,self).get(request,*args,**kwargs) 
+
+
+
+'''
+class UserStatus(View):
+    def user_stat(request):
+        if request.method == "GET":
+            return render(request, "public/login.html")
+
+        user = authenticate(username=username, password=password)
+        if user.is_active:
+            print(user,"is True")
+            return render(request, "index.html")
+        else:
+            print(user,"is False")
+            return render(request, "public/login.html")
+                 
+    def get(self,request,*args,**kwargs):
+     return super(UserStatus,self).get(request,*args,**kwargs)
+'''

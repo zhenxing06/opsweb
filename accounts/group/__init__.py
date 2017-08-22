@@ -1,32 +1,31 @@
-from django.views.generic import ListView
-from django.contrib.auth.models import User,Group
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import View
-from django.http import HttpResponse,JsonResponse,QueryDict
+from django.contrib.auth.models import Group
+from django.views.generic import ListView,View
+from django.http import JsonResponse
+from django.db import IntegrityError
 
-class UserListView(LoginRequiredMixin,ListView):
-    template_name = "user/userlist.html"
-    model = User
-    paginate_by = 10
 
-class ModifyUserStatusView(View):
+class GroupListView(ListView):
+    model = Group
+    template_name = "user/grouplist.html"
+
+class GroupCreateView(View):
     def post(self,request):
-        uid = request.POST.get("uid","")
-        print(uid)
+        group_name = request.POST.get("name","")
         ret = {"status":0}
-        try:
-            user_obj = User.objects.get(id=uid)
-            if user_obj.is_active:
-                user_obj.is_active = False
-            else:
-                user_obj.is_active = True
-            user_obj.save()
-        except User.DoesNotExist:
+        if not group_name:
             ret["status"] = 1
-            ret["errmsg"] = "用户名和密码错误"
+            ret["errmsg"] = "用户不能为空"
+            return JsonResponse(ret)
+        try:
+            g = Group(name=group_name)
+            g.save()
+        except IntegrityError:
+            ret["status"] = 1
+            ret["errmsg"] = "用户已存在"
         return JsonResponse(ret)
 
-class ModifyUserGroupView(View):
+
+class ModofyUserGroupView(View):
     def get(self,request):
         uid = request.GET.get('uid','')
         group_objs = Group.objects.all()
@@ -36,7 +35,7 @@ class ModifyUserGroupView(View):
             pass
         else:
             group_objs = group_objs.exclude(id__in=user_obj.groups.values_list('id'))
-        return JsonResponse(list(group_objs.values("id","name")),safe=False)
+        return JsonResponse(list(groups_objs.values("id","name")),safe=False)
 
     def put(self,request):
         ret = {"status":0}
@@ -57,4 +56,4 @@ class ModifyUserGroupView(View):
             return JsonResponse(ret)
         user_obj.groups.add(group_obj)
         return JsonResponse(ret)
-
+ 
